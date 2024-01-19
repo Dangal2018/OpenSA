@@ -58,7 +58,7 @@ def PLS_DA(X_train, X_test, y_train, y_test):
 
     y_train = pd.get_dummies(y_train)
     # 建模
-    model = PLSRegression(n_components=228)
+    model = PLSRegression(n_components=40)
     model.fit(X_train, y_train)
     # 预测
     y_pred = model.predict(X_test)

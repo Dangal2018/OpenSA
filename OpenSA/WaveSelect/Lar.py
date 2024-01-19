@@ -27,5 +27,5 @@ def Lar(X, y, nums=40):
     corf = np.asarray(corflist)
     SpectrumList = corf.argsort()[-1:-(nums+1):-1]
     SpectrumList = np.sort(SpectrumList)
-
+    print(SpectrumList)
     return SpectrumList

@@ -98,11 +98,13 @@ def CARS_Cloud(X, y, N=50, f=20, cv=10):
         wnum = n - wave_num
         if wnum > 0:
             d = np.hstack((d, np.full((1, wnum), -1)))
+
         if len(WaveData) == 0:
             WaveData = d
         else:
             WaveData  = np.vstack((WaveData, d.reshape(1, -1)))
-
+            # print(WaveData.shape)
+            # print(WaveData)
         if wave_num < f:
             f = wave_num
 

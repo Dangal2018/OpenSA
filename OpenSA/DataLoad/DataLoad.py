@@ -167,21 +167,23 @@ def ks(data, label, test_size=0.2):
 def LoadNirtest(type):
 
     if type == "Rgs":
-        CDataPath1 = './/Data//Rgs//Cdata1.csv'
-        VDataPath1 = './/Data//Rgs//Vdata1.csv'
-        TDataPath1 = './/Data//Rgs//Tdata1.csv'
-
-        Cdata1 = np.loadtxt(open(CDataPath1, 'rb'), dtype=np.float64, delimiter=',', skiprows=0)
-        Vdata1 = np.loadtxt(open(VDataPath1, 'rb'), dtype=np.float64, delimiter=',', skiprows=0)
-        Tdata1 = np.loadtxt(open(TDataPath1, 'rb'), dtype=np.float64, delimiter=',', skiprows=0)
-
-        Nirdata1 = np.concatenate((Cdata1, Vdata1))
-        Nirdata = np.concatenate((Nirdata1, Tdata1))
-        data = Nirdata[:, :-4]
-        label = Nirdata[:, -1]
-
+        DataPath1 =  './/Data//0117yumi.csv'
+        # CDataPath1 = './/Data//Rgs//Cdata1.csv'
+        # VDataPath1 = './/Data//Rgs//Vdata1.csv'
+        # TDataPath1 = './/Data//Rgs//Tdata1.csv'
+        data1 = np.loadtxt(open(DataPath1, 'rb'), dtype=np.float64, delimiter=',', skiprows=0)
+        # Cdata1 = np.loadtxt(open(CDataPath1, 'rb'), dtype=np.float64, delimiter=',', skiprows=0)
+        # Vdata1 = np.loadtxt(open(VDataPath1, 'rb'), dtype=np.float64, delimiter=',', skiprows=0)
+        # Tdata1 = np.loadtxt(open(TDataPath1, 'rb'), dtype=np.float64, delimiter=',', skiprows=0)
+        #
+        # Nirdata1 = np.concatenate((Cdata1, Vdata1))
+        # Nirdata = np.concatenate((Nirdata1, Tdata1))
+        data = data1[:, :-1]
+        label =data1[:, -1]
+        #print(data)
+        #print(label)
     elif type == "Cls":
-        path = './/Data//Cls//table.csv'
+        path = './/Data//Cls//result.csv'
         Nirdata = np.loadtxt(open(path, 'rb'), dtype=np.float64, delimiter=',', skiprows=0)
         data = Nirdata[:, :-1]
         label = Nirdata[:, -1]
@@ -204,7 +206,7 @@ def SetSplit(method, data, label, test_size=0.2, randomseed=123):
     if method == "random":
         X_train, X_test, y_train, y_test = random(data, label, test_size, randomseed)
     elif method == "spxy":
-        X_train, X_test, y_train, y_test = spxy(data, label, test_size)
+        X_train, X_test, y_train, y_test = spxy(data, label, 0.25)
     elif method == "ks":
         X_train, X_test, y_train, y_test = ks(data, label, test_size)
     else:

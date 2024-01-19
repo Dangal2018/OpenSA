@@ -14,10 +14,18 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from copy import deepcopy
 import pandas as pd
-#import pywt
+import pywavelet as pywt
+import matplotlib.pyplot as plt
 
-# ref1: 湖南示范大学同学实列，并做了部分修改
-# ref2: https://blog.csdn.net/qq2512446791
+# 单位向量归一化
+def UVN(data):
+    """
+       :param data: raw spectrum data, shape (n_samples, n_features)
+       :return: data after UVN :(n_samples, n_features)
+       """
+    for i in range(data.shape[0]):
+        data[i] = data[i] / np.linalg.norm(data[i])
+    return data
 
 # 最大最小值归一化
 def MMS(data):
@@ -64,6 +72,16 @@ def SNV(data):
     data_average = np.mean(data, axis=1)  # 每条光谱的平均值
     # SNV计算
     data_snv = [[((data[i][j] - data_average[i]) / data_std[i]) for j in range(n)] for i in range(m)]
+
+    # 画SNV图
+    # plt.figure(500)
+    # x_col = np.linspace(0,len(data_snv[0]),len(data_snv[0]))
+    # y_col = np.transpose(data_snv)
+    # plt.plot(x_col, y_col)
+    # plt.xlabel('pixels', fontsize=16, fontweight='bold', color='black')
+    # plt.ylabel('intensity', fontsize=16, fontweight='bold', color='black')
+    # plt.title('SNV', fontsize=16, color='black')
+    # plt.show()
     return  np.array(data_snv)
 
 
@@ -165,6 +183,14 @@ def MSC(data):
         k = l.coef_
         b = l.intercept_
         msc[i, :] = (y - b) / k
+    # plt.figure(500)
+    # x_col = np.linspace(0, len(msc[0, :]), len(msc[0, :]))
+    # y_col = np.transpose(msc)
+    # plt.plot(x_col, y_col)
+    # plt.xlabel('wavelength', fontsize=16, fontweight='bold', color='black')
+    # plt.ylabel('intensity', fontsize=16, fontweight='bold', color='black')
+    # plt.title('MSC', fontsize=16, color='black')
+    # plt.show()
     return msc
 
 # 小波变换
@@ -199,6 +225,8 @@ def Preprocessing(method, data):
 
     if method == "None":
         data = data
+    elif method == 'UVN':
+        data = UVN(data)
     elif method == 'MMS':
         data = MMS(data)
     elif method == 'SS':

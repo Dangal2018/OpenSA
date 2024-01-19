@@ -29,6 +29,7 @@ def SpctrumFeatureSelcet(method, X, y):
         X_Feature = X
     elif method== "Cars":
         Featuresecletidx = CARS_Cloud(X, y)
+        # print("CARS feature num:",Featuresecletidx)
         X_Feature = X[:, Featuresecletidx]
     elif method == "Lars":
         Featuresecletidx = Lar(X, y)

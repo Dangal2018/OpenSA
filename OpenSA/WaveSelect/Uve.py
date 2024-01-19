@@ -8,10 +8,7 @@
     @License：Apache-2.0 license
 
 """
-
-
-
-
+import matplotlib.pyplot as plt
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
@@ -21,6 +18,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.utils import shuffle
 from numpy.linalg import matrix_rank as rank
 import numpy as np
+
 
 class UVE:
     def __init__(self, x, y, ncomp=1, nrep=500, testSize=0.2):
@@ -54,6 +52,7 @@ class UVE:
             ytrain = self.y[train]
             plsModel = PLSRegression(min([self.ncomp, rank(xtrain)]))
             plsModel.fit(xtrain, ytrain)
+            plsModel.coef_ = plsModel.coef_.reshape(-1, 1)
             PLSCoef[step, :] = plsModel.coef_.T
             step += 1
         meanCoef = np.mean(PLSCoef, axis=0)
@@ -64,7 +63,7 @@ class UVE:
         self.featureIndex = np.argsort(-np.abs(self.criteria))
         for i in range(self.x.shape[1]):
             xi = self.x[:, self.featureIndex[:i + 1]]
-            if i<self.ncomp:
+            if i < self.ncomp:
                 regModel = LinearRegression()
             else:
                 regModel = PLSRegression(min([self.ncomp, rank(xi)]))
@@ -74,7 +73,7 @@ class UVE:
 
     def cutFeature(self, *args):
         cuti = np.argmax(self.featureR2)
-        self.selFeature = self.featureIndex[:cuti+1]
+        self.selFeature = self.featureIndex[:cuti + 1]
         if len(args) != 0:
             returnx = list(args)
             i = 0
@@ -82,4 +81,18 @@ class UVE:
                 if argi.shape[1] == self.x.shape[1]:
                     returnx[i] = argi[:, self.selFeature]
                 i += 1
+
+        contrib_dict = {}
+        for i, feature in enumerate(self.selFeature):
+            contrib_dict[feature] = self.featureR2[feature] * self.featureR2.size / np.sum(self.featureR2)
+            # 按照贡献率从高到低对字典进行排序
+        sorted_contrib_dict = dict(sorted(contrib_dict.items(), key=lambda x: x[1], reverse=True))
+        print(sorted_contrib_dict)
+
+        keys = (list((sorted_contrib_dict.keys())))
+        keys = [str(key) for key in keys][:20]
+        values = list(sorted_contrib_dict.values())[:20]
+        plt.title("UVE Contribution")
+        plt.plot(keys, values)
+        plt.show()
         return returnx
